@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Revenue Dashboard | John Stephenson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+        }
+        
+        a {
+            color: #6C8EBF;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <div class="max-w-5xl mx-auto px-6 py-12 md:py-16">
+        <!-- Navigation -->
+        <nav class="mb-8">
+            <a href="index.html" class="text-sm text-gray-600 hover:text-gray-900">← Back to Home</a>
+        </nav>
+
+        <!-- Project Overview -->
+        <div class="mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: #6C8EBF;">
+                Interactive Revenue Dashboard
+            </h1>
+            <p class="text-lg text-gray-700 leading-relaxed max-w-3xl">
+                Created an interactive dashboard connecting directly to live data sources. Finance team can explore revenue trends in real-time, filter by multiple dimensions, and export insights without waiting for scheduled reports.
+            </p>
+        </div>
+
+        <hr class="border-gray-300 mb-12">
+
+        <!-- Details -->
+        <div class="space-y-8">
+            <div>
+                <h2 class="text-2xl font-semibold mb-4" style="color: #334155;">Overview</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    The finance team was stuck waiting for weekly revenue reports that were already outdated by the time they arrived. They needed real-time visibility into revenue trends and the ability to explore the data on their own terms without depending on scheduled reports.
+                </p>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-semibold mb-4" style="color: #334155;">Solution</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    I built an interactive dashboard using Power BI that connected directly to their live data sources. The solution included:
+                </p>
+                <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
+                    <li>Direct connection to live data sources with automatic refresh</li>
+                    <li>Interactive time-series charts for trend analysis</li>
+                    <li>Multi-dimensional filtering (time period, product lines, regions)</li>
+                    <li>Drill-down capabilities for detailed exploration</li>
+                    <li>Export functionality for deeper analysis in Excel</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-semibold mb-4" style="color: #334155;">Results</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    The dashboard eliminated the weekly report backlog entirely. The finance team could now answer questions immediately, spot trends as they developed, and make faster decisions. The dashboard became essential for their daily operations.
+                </p>
+            </div>
+
+            <div class="bg-gray-50 border-2 rounded p-6" style="border-color: #64748b;">
+                <h3 class="font-medium text-lg mb-3" style="color: #334155;">Technologies Used</h3>
+                <div class="flex flex-wrap gap-2 text-sm text-gray-600">
+                    <span>Power BI</span>
+                    <span>•</span>
+                    <span>ETL</span>
+                    <span>•</span>
+                    <span>Data Visualization</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

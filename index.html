@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John Stephenson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+        }
+        
+        a {
+            color: #6C8EBF;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .skill-ticker {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        
+        .skill-ticker-content {
+            display: inline-flex;
+            animation: ticker 30s linear infinite;
+        }
+        
+        .skill-ticker-item {
+            display: inline-block;
+            padding: 20px 30px;
+            white-space: normal;
+            min-width: 300px;
+            background-color: white;
+            border: 2px solid #64748b;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+        
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        .skill-ticker:hover .skill-ticker-content {
+            animation-play-state: paused;
+        }
+        
+        .dark-blue {
+            color: #6C8EBF;
+        }
+        
+        .dark-blue-bg {
+            background-color: #6C8EBF;
+        }
+        
+        .dark-blue-border {
+            border-color: #6C8EBF;
+        }
+        
+        .blue-bg {
+            background-color: #9FC0EA;
+        }
+        
+        .blue-grey-bg {
+            background-color: #e2e8f0;
+        }
+        
+        .blue-grey-border {
+            border-color: #64748b;
+        }
+        
+        .blue-grey-text {
+            color: #334155;
+        }
+        
+        .project-box {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .project-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(100, 116, 139, 0.2);
+            border-color: #6C8EBF;
+            background-color: #f8fafc;
+            text-decoration: none;
+        }
+        
+        .project-box:hover * {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <div class="max-w-5xl mx-auto px-6 py-12 md:py-16">
+        <!-- Navigation -->
+        <nav class="mb-12 text-sm text-gray-600">
+            <div class="flex flex-wrap gap-4">
+                <a href="#projects" class="hover:dark-blue dark-blue">PROJECTS</a>
+                <a href="#skills" class="hover:dark-blue dark-blue">SKILLS</a>
+                <a href="#contact" class="hover:dark-blue dark-blue">CONTACT</a>
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <div class="mb-12 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 dark-blue">
+                👋 Hi, I'm John.
+            </h1>
+            <p class="text-lg md:text-xl text-gray-700 leading-relaxed mb-6 max-w-2xl mx-auto">
+                I am a problem solver who likes to make complex things simple. My approach is centered on delivering smart, efficient solutions that address problems quickly and practically.
+            </p>
+            <hr class="border-gray-300 max-w-2xl mx-auto">
+        </div>
+
+        <!-- Recent Work Section -->
+        <div class="mb-16 grid grid-cols-1 md:grid-cols-3 grid-rows-2 gap-4" id="projects">
+            <!-- Project 1 -->
+            <a href="sales-analytics-dashboard.html" class="md:col-span-2 bg-white border-2 blue-grey-border rounded p-4 project-box block">
+                <h3 class="font-medium text-lg blue-grey-text mb-2">
+                    Sales Analytics Dashboard
+                </h3>
+                <p class="text-sm text-gray-700 mb-2">
+                    Real-time dashboard replacing weekly reports. Reduced data questions by 60%.
+                </p>
+                <div class="flex flex-wrap gap-1.5 text-xs text-gray-500">
+                    <span>Tableau</span>
+                    <span>•</span>
+                    <span>SQL</span>
+                </div>
+            </a>
+
+            <!-- Project 3 -->
+            <a href="customer-journey-analysis.html" class="md:col-span-1 bg-white border-2 blue-grey-border rounded p-4 project-box block">
+                <h3 class="font-medium text-lg blue-grey-text mb-2">
+                    Customer Journey Analysis
+                </h3>
+                <p class="text-sm text-gray-700 mb-2">
+                    Mapped touchpoints, increased conversion by 28%.
+                </p>
+                <div class="flex flex-wrap gap-1.5 text-xs text-gray-500">
+                    <span>Python</span>
+                    <span>•</span>
+                    <span>Analysis</span>
+                </div>
+            </a>
+
+            <!-- Project 2 -->
+            <a href="interactive-revenue-dashboard.html" class="md:col-span-2 bg-white border-2 blue-grey-border rounded p-4 project-box block">
+                <h3 class="font-medium text-lg blue-grey-text mb-2">
+                    Interactive Revenue Dashboard
+                </h3>
+                <p class="text-sm text-gray-700 mb-2">
+                    Live data dashboard for finance team. Eliminated report backlog.
+                </p>
+                <div class="flex flex-wrap gap-1.5 text-xs text-gray-500">
+                    <span>Power BI</span>
+                    <span>•</span>
+                    <span>ETL</span>
+                </div>
+            </a>
+
+            <!-- Project 4 -->
+            <a href="process-optimization.html" class="md:col-span-1 bg-white border-2 blue-grey-border rounded p-4 project-box block">
+                <h3 class="font-medium text-lg blue-grey-text mb-2">
+                    Process Optimization
+                </h3>
+                <p class="text-sm text-gray-700 mb-2">
+                    Identified bottlenecks, reduced processing time by 40%.
+                </p>
+                <div class="flex flex-wrap gap-1.5 text-xs text-gray-500">
+                    <span>SQL</span>
+                    <span>•</span>
+                    <span>Analytics</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="mb-16" id="skills">
+            <div class="blue-grey-bg p-6 rounded border-2 blue-grey-border">
+                <h2 class="text-sm font-medium uppercase tracking-wide mb-4 blue-grey-text">Skills & Tools</h2>
+                <div class="skill-ticker">
+                    <div class="skill-ticker-content">
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">Tableau</div>
+                            <div class="text-sm text-gray-700">Built interactive sales dashboards with real-time data connections and drill-down capabilities</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">Power BI</div>
+                            <div class="text-sm text-gray-700">Created revenue dashboards with live data sources and automated refresh schedules</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">Python</div>
+                            <div class="text-sm text-gray-700">Analyzed customer journey data using pandas and matplotlib for funnel visualization</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">SQL</div>
+                            <div class="text-sm text-gray-700">Wrote complex queries for data extraction, transformation, and process optimization analysis</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">Excel</div>
+                            <div class="text-sm text-gray-700">Built pivot tables and data models for quick analysis and reporting automation</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">R</div>
+                            <div class="text-sm text-gray-700">Performed statistical analysis and created visualizations using ggplot2 and dplyr</div>
+                        </div>
+                        <!-- Duplicate for seamless loop -->
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">Tableau</div>
+                            <div class="text-sm text-gray-700">Built interactive sales dashboards with real-time data connections and drill-down capabilities</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">Power BI</div>
+                            <div class="text-sm text-gray-700">Created revenue dashboards with live data sources and automated refresh schedules</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">Python</div>
+                            <div class="text-sm text-gray-700">Analyzed customer journey data using pandas and matplotlib for funnel visualization</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">SQL</div>
+                            <div class="text-sm text-gray-700">Wrote complex queries for data extraction, transformation, and process optimization analysis</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">Excel</div>
+                            <div class="text-sm text-gray-700">Built pivot tables and data models for quick analysis and reporting automation</div>
+                        </div>
+                        <div class="skill-ticker-item">
+                            <div class="font-medium text-lg blue-grey-text mb-2">R</div>
+                            <div class="text-sm text-gray-700">Performed statistical analysis and created visualizations using ggplot2 and dplyr</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="mb-16" id="contact">
+            <div class="bg-gray-200 p-6 rounded border-2 border-gray-400">
+                <h2 class="text-sm font-medium text-gray-800 mb-4 uppercase tracking-wide">Let's work together</h2>
+                <p class="text-gray-700 mb-4">
+                    Need help with data analysis, dashboards, or process optimization? I'm available for consulting.
+                </p>
+                <p>
+                    <a href="mailto:john@example.com" class="hover:underline text-gray-800 font-medium">Get in touch</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="pt-8 border-t-2 dark-blue-border text-sm text-gray-500">
+            <p>© John Stephenson</p>
+        </footer>
+    </div>
+
+</body>
+</html>

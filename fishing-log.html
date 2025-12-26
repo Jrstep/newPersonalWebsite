@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishing Log | John Stephenson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        .marker-popup {
+            font-family: 'Inter', sans-serif;
+        }
+        .view-all-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.6);
+            border-radius: 6px;
+            padding: 8px 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            display: none;
+            transition: all 0.2s ease;
+        }
+        .view-all-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 8px 12px rgba(0,0,0,0.08);
+            transform: translateY(-1px);
+        }
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            padding: 14px;
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .custom-popup .leaflet-popup-tip {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .custom-popup .leaflet-popup-close-button {
+            color: #6b7280;
+            font-size: 18px;
+            padding: 4px 8px;
+        }
+        .custom-popup .leaflet-popup-close-button:hover {
+            color: #374151;
+        }
+    </style>
+</head>
+    <body class="bg-gray-50 text-gray-900">
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 py-4 px-4">
+        <div class="max-w-6xl mx-auto">
+            <a href="index.html" class="text-gray-600 hover:text-green-700 transition-colors flex items-center gap-2">
+                <span>←</span>
+                <span>Back to Home</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Project Header -->
+    <section class="py-12 px-4 bg-white">
+        <div class="max-w-4xl mx-auto">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-600 to-green-700 rounded-xl mb-5 flex items-center justify-center shadow-sm">
+                <span class="text-white text-2xl">🎣</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Fishing Log</h1>
+            <p class="text-lg text-gray-600 leading-relaxed">
+                An interactive map tracking fishing locations pulled directly from a Google Sheet. 
+                Update your sheet with new spots and notes, and they appear on the map automatically. 
+                Click markers to see detailed notes, or browse all locations in the sidebar.
+            </p>
+        </div>
+    </section>
+
+    <!-- Embedded Map Section -->
+    <section class="py-16 px-4 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <!-- Map Controls Bar -->
+                <div class="bg-white border-b border-gray-100 px-6 py-3.5 flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-700">Interactive Map</h2>
+                    <button id="refreshBtn" class="px-4 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-all text-sm font-medium shadow-sm hover:shadow">
+                        Refresh Data
+                    </button>
+                </div>
+                
+                <!-- Map Container -->
+                <div class="flex flex-col md:flex-row" style="height: 600px;">
+                    <!-- Map Section -->
+                    <div class="flex-1 md:w-2/3 relative">
+                        <div id="map" style="height: 100%; width: 100%;"></div>
+                        <button id="viewAllBtn" class="view-all-btn">
+                            ← View All Locations
+                        </button>
+                    </div>
+
+                    <!-- Notes Panel -->
+                    <div class="md:w-1/3 bg-white border-l border-gray-100" style="height: 100%; overflow-y: auto;">
+                        <div class="p-6">
+                            <h3 class="text-base font-semibold mb-4 text-gray-700">Fishing Notes</h3>
+                            <div id="notesContent" class="space-y-3">
+                                <p class="text-gray-400 italic text-sm">Click on a marker on the map to view notes for that location.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Initialize map at US level
+        const map = L.map('map').setView([39.8283, -98.5795], 4); // Center on US, zoom level 4
+
+        // Add terrain basemap (similar to Tableau's terrain basemap)
+        // Using Esri World Topographic Map which has terrain features, elevation shading, and waterway labels
+        const terrainLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; <a href="https://www.esri.com/">Esri</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Store all locations bounds and data for "View All" functionality
+        let allLocationsBounds = null;
+        let allLocations = [];
+        let currentMarkers = []; // Track all markers to ensure proper cleanup
+
+        // Function to find the largest cluster of locations
+        function findLargestCluster(locations, clusterDistance = 0.5) {
+            if (locations.length === 0) return null;
+            if (locations.length === 1) return locations;
+            
+            const clusters = [];
+            const used = new Set();
+            
+            // Group nearby locations into clusters
+            for (let i = 0; i < locations.length; i++) {
+                if (used.has(i)) continue;
+                
+                const cluster = [locations[i]];
+                used.add(i);
+                
+                // Find all locations within clusterDistance degrees
+                for (let j = i + 1; j < locations.length; j++) {
+                    if (used.has(j)) continue;
+                    
+                    const distance = Math.sqrt(
+                        Math.pow(locations[i].lat - locations[j].lat, 2) +
+                        Math.pow(locations[i].lng - locations[j].lng, 2)
+                    );
+                    
+                    if (distance < clusterDistance) {
+                        cluster.push(locations[j]);
+                        used.add(j);
+                    }
+                }
+                
+                clusters.push(cluster);
+            }
+            
+            // Find the largest cluster
+            let largestCluster = clusters[0];
+            for (let i = 1; i < clusters.length; i++) {
+                if (clusters[i].length > largestCluster.length) {
+                    largestCluster = clusters[i];
+                }
+            }
+            
+            // Only return cluster if it has at least 2 locations or is significantly larger
+            if (largestCluster.length >= 2 || largestCluster.length > locations.length * 0.3) {
+                return largestCluster;
+            }
+            
+            return null; // No clear cluster found
+        }
+
+        // Custom green marker icon for fishing spots
+        const fishingIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        // Simple CSV parser that handles quoted fields
+        function parseCSV(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            if (lines.length === 0) return { headers: [], rows: [] };
+            
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            const rows = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const row = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let j = 0; j < lines[i].length; j++) {
+                    const char = lines[i][j];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        row.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                row.push(current.trim());
+                rows.push(row);
+            }
+            
+            return { headers, rows };
+        }
+
+        // Function to load data from Google Sheets
+        async function loadFishingData() {
+            // Google Sheet ID
+            const sheetId = '2PACX-1vQPoYta7IWA8RBkPQWwH_Zngl5CFi6Ro1GIXzUVw0cn-qALcIE4NJxDVVK70YxtcKBPQuIFFDgXNOfZ';
+            
+            // Try multiple methods to fetch data
+            const methods = [
+                // Method 1: Direct CSV with CORS proxy (corsproxy.io)
+                `https://corsproxy.io/?${encodeURIComponent(`https://docs.google.com/spreadsheets/d/e/${sheetId}/pub?output=csv`)}`,
+                // Method 2: JSON API format
+                `https://docs.google.com/spreadsheets/d/e/${sheetId}/pub?output=json`,
+                // Method 3: Alternative CORS proxy
+                `https://api.allorigins.win/get?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/e/${sheetId}/pub?output=csv`)}`
+            ];
+            
+            try {
+                // Show loading state
+                document.getElementById('notesContent').innerHTML = '<p class="text-gray-500 italic text-sm">Loading fishing data...</p>';
+                
+                let csvText = '';
+                let methodUsed = '';
+                
+                // Try each method until one works
+                for (let i = 0; i < methods.length; i++) {
+                    try {
+                        methodUsed = `Method ${i + 1}`;
+                        console.log(`Trying ${methodUsed}...`);
+                        
+                        const response = await fetch(methods[i], {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'text/csv,application/json'
+                            }
+                        });
+                        
+                        if (!response.ok) {
+                            console.log(`${methodUsed} failed: ${response.status}`);
+                            continue;
+                        }
+                        
+                        const data = await response.text();
+                        
+                        // Handle JSON response (method 2)
+                        if (i === 1) {
+                            const jsonData = JSON.parse(data);
+                            // Convert JSON to CSV-like format
+                            if (jsonData.table && jsonData.table.rows) {
+                                const rows = jsonData.table.rows;
+                                if (rows.length === 0) throw new Error('No data rows found');
+                                
+                                // Get headers from first row
+                                const headers = rows[0].c.map(cell => (cell && cell.v) ? cell.v.toString() : '');
+                                csvText = headers.join(',') + '\n';
+                                
+                                // Get data rows
+                                for (let j = 1; j < rows.length; j++) {
+                                    const row = rows[j].c.map(cell => {
+                                        const value = (cell && cell.v) ? cell.v.toString() : '';
+                                        // Escape commas and quotes
+                                        return value.includes(',') || value.includes('"') ? `"${value.replace(/"/g, '""')}"` : value;
+                                    });
+                                    csvText += row.join(',') + '\n';
+                                }
+                            } else {
+                                throw new Error('Unexpected JSON structure');
+                            }
+                        } 
+                        // Handle CORS proxy JSON response (method 3)
+                        else if (i === 2) {
+                            const proxyData = JSON.parse(data);
+                            csvText = proxyData.contents || '';
+                        }
+                        // Handle direct CSV (method 1)
+                        else {
+                            csvText = data;
+                        }
+                        
+                        if (csvText && csvText.trim().length > 0) {
+                            console.log(`Success with ${methodUsed}!`);
+                            break;
+                        }
+                    } catch (err) {
+                        console.log(`${methodUsed} error:`, err.message);
+                        if (i === methods.length - 1) throw err;
+                        continue;
+                    }
+                }
+                
+                // Check if we got actual CSV data
+                if (!csvText || csvText.trim().length === 0) {
+                    throw new Error('Received empty response from Google Sheets. Make sure the sheet is published.');
+                }
+                
+                // Log first 200 chars for debugging
+                console.log('CSV data preview:', csvText.substring(0, 200));
+                
+                const { headers, rows } = parseCSV(csvText);
+                
+                // Check if we got headers
+                if (headers.length === 0) {
+                    throw new Error('No headers found. Make sure your sheet has a header row.');
+                }
+                
+                console.log('Parsed headers:', headers);
+                
+                // Find column indices (case-insensitive)
+                const nameIdx = headers.findIndex(h => h.toLowerCase().trim() === 'name');
+                const latIdx = headers.findIndex(h => h.toLowerCase().trim() === 'latitude');
+                const lngIdx = headers.findIndex(h => h.toLowerCase().trim() === 'longitude');
+                const descIdx = headers.findIndex(h => h.toLowerCase().trim() === 'description');
+                
+                if (nameIdx === -1 || latIdx === -1 || lngIdx === -1 || descIdx === -1) {
+                    throw new Error(`Missing required columns. Found: ${headers.join(', ')}. Need: Name, Latitude, Longitude, Description`);
+                }
+                
+                // Clear existing markers
+                currentMarkers.forEach(marker => {
+                    map.removeLayer(marker);
+                });
+                currentMarkers = [];
+                
+                // Process data rows - create one marker per location
+                allLocations = []; // Reset global locations array
+                
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (row.length <= Math.max(nameIdx, latIdx, lngIdx, descIdx)) continue;
+                    
+                    const name = (row[nameIdx] || '').trim() || 'Unnamed Location';
+                    const lat = parseFloat(row[latIdx]);
+                    const lng = parseFloat(row[lngIdx]);
+                    const description = (row[descIdx] || '').trim() || 'No description';
+                    
+                    if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                        const location = { name, lat, lng, description };
+                        allLocations.push(location);
+                        
+                        // Create popup content
+                        const popupContent = `
+                            <div class="marker-popup" style="min-width: 200px;">
+                                <h3 style="font-weight: 600; font-size: 15px; margin-bottom: 6px; color: #111827;">${escapeHtml(name)}</h3>
+                                <p style="color: #6b7280; font-size: 13px; margin: 0; line-height: 1.5;">${escapeHtml(description.substring(0, 100))}${description.length > 100 ? '...' : ''}</p>
+                            </div>
+                        `;
+                        
+                        // Create marker - one per location
+                        const marker = L.marker([lat, lng], { icon: fishingIcon })
+                            .bindPopup(popupContent, {
+                                className: 'custom-popup',
+                                maxWidth: 250
+                            });
+                        
+                        // Add click event
+                        marker.on('click', function() {
+                            showNotes(name, description, lat, lng);
+                            map.flyTo([lat, lng], Math.max(map.getZoom(), 14), {
+                                animate: true,
+                                duration: 0.75
+                            });
+                            document.getElementById('viewAllBtn').style.display = 'block';
+                        });
+                        
+                        marker.addTo(map);
+                        currentMarkers.push(marker);
+                    }
+                }
+                
+                // Find largest cluster and zoom to it, or fit all if no clear cluster
+                if (allLocations.length > 0) {
+                    const bounds = allLocations.map(loc => [loc.lat, loc.lng]);
+                    allLocationsBounds = bounds;
+                    
+                    // Find the largest cluster
+                    const largestCluster = findLargestCluster(allLocations);
+                    
+                    if (largestCluster && largestCluster.length > 0) {
+                        // Zoom to largest cluster with animation
+                        const clusterBounds = L.latLngBounds(largestCluster.map(loc => [loc.lat, loc.lng]));
+                        setTimeout(() => {
+                            const clusterCenter = clusterBounds.getCenter();
+                            const clusterZoom = map.getBoundsZoom(clusterBounds, false);
+                            map.flyTo(clusterCenter, Math.min(clusterZoom - 1, 15), {
+                                animate: true,
+                                duration: 1.5
+                            });
+                        }, 500);
+                    } else {
+                        // If no clear cluster, fit all bounds
+                        map.fitBounds(bounds, { padding: [50, 50] });
+                    }
+                    
+                    // Hide "View All" button initially
+                    document.getElementById('viewAllBtn').style.display = 'none';
+                }
+                
+                // Show all locations in notes panel by default
+                if (allLocations.length > 0) {
+                    showAllNotes(allLocations);
+                } else {
+                    document.getElementById('notesContent').innerHTML = 
+                        '<p class="text-gray-500 italic text-sm">No fishing locations found. Make sure your Google Sheet has data with valid coordinates.</p>';
+                }
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('notesContent').innerHTML = 
+                    `<div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <p class="text-red-700 font-semibold mb-2 text-sm">Error loading data</p>
+                        <p class="text-sm text-red-600 mb-2">${error.message}</p>
+                        <p class="text-xs text-gray-600 mt-3 mb-2">Troubleshooting steps:</p>
+                        <ul class="text-xs text-gray-600 list-disc list-inside space-y-1">
+                            <li>Make sure your Google Sheet is published (File > Share > Publish to web)</li>
+                            <li>Verify the sheet has columns: Name, Latitude, Longitude, Description</li>
+                            <li>Check that your sheet has data rows (not just headers)</li>
+                            <li>Try refreshing the page</li>
+                        </ul>
+                    </div>`;
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Function to show notes for a specific location
+        function showNotes(name, description, lat, lng) {
+            const notesContent = document.getElementById('notesContent');
+            notesContent.innerHTML = `
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/60 rounded-xl p-5 shadow-sm">
+                    <h3 class="text-lg font-bold mb-2 text-gray-900">${escapeHtml(name)}</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono">${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
+                    <div class="prose max-w-none">
+                        <p class="text-gray-700 leading-relaxed whitespace-pre-wrap text-sm">${escapeHtml(description)}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to show all notes
+        function showAllNotes(locations) {
+            const notesContent = document.getElementById('notesContent');
+                if (locations.length === 0) {
+                    notesContent.innerHTML = '<p class="text-gray-500 italic text-sm">No fishing locations found.</p>';
+                    return;
+                }
+            
+            let html = `
+                <p class="text-gray-500 mb-4 text-xs font-medium">Total locations: <span class="font-semibold text-gray-700">${locations.length}</span></p>
+                <div class="space-y-2.5">
+            `;
+            
+            locations.forEach(loc => {
+                const safeName = loc.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeDesc = loc.description.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+                html += `
+                    <div class="border border-gray-200/60 rounded-lg p-3 hover:bg-gray-50 hover:border-gray-300 transition-all cursor-pointer bg-white shadow-sm hover:shadow" onclick="showNotes('${safeName}', '${safeDesc}', ${loc.lat}, ${loc.lng}); map.flyTo([${loc.lat}, ${loc.lng}], 14, {animate: true, duration: 0.75}); document.getElementById('viewAllBtn').style.display = 'block';">
+                        <h3 class="font-semibold text-sm mb-1 text-gray-900">${escapeHtml(loc.name)}</h3>
+                        <p class="text-xs text-gray-400 mb-2 font-mono">${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}</p>
+                        <p class="text-gray-600 text-xs line-clamp-2 leading-relaxed">${escapeHtml(loc.description)}</p>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            notesContent.innerHTML = html;
+        }
+
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', loadFishingData);
+
+        // View All button - zoom back out to show all locations
+        document.getElementById('viewAllBtn').addEventListener('click', function() {
+            if (allLocationsBounds && allLocationsBounds.length > 0) {
+                // Create bounds from all locations
+                const bounds = L.latLngBounds(allLocationsBounds);
+                const center = bounds.getCenter();
+                const zoom = map.getBoundsZoom(bounds, false);
+                map.flyTo(center, Math.max(zoom - 1, 4), {
+                    animate: true,
+                    duration: 1
+                });
+                // Hide the button
+                this.style.display = 'none';
+                // Show all notes again
+                if (allLocations.length > 0) {
+                    showAllNotes(allLocations);
+                }
+            }
+        });
+
+        // Load data on page load
+        loadFishingData();
+    </script>
+
+    <!-- Footer -->
+    <footer class="py-8 px-4 bg-stone-900 text-stone-400 text-center">
+        <p>&copy; 2024 John Stephenson. Made with data, a bit of coffee, and probably too many spreadsheets.</p>
+    </footer>
+</body>
+</html>
+
