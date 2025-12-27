@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Analytics Dashboard | John Stephenson</title>
+    <title>Interactive Fishing Location Map | John Stephenson</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="fishing-map-style.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -33,56 +37,73 @@
         <!-- Project Overview -->
         <div class="mb-12">
             <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: #6C8EBF;">
-                Sales Analytics Dashboard
+                Interactive Fishing Location Map
             </h1>
             <p class="text-lg text-gray-700 leading-relaxed max-w-3xl">
-                Built a dashboard that the sales team actually used daily. Replaced weekly email reports with real-time metrics, customizable views, and drill-down capabilities.
+                Built an interactive map that connects to Google Sheets to visualize fishing locations and catch data. The map updates automatically as new data is added, making it easy to track successful spots and plan future trips.
             </p>
         </div>
 
         <hr class="border-gray-300 mb-12">
+
+        <!-- Map Section -->
+        <div class="mb-12">
+            <div id="map"></div>
+        </div>
 
         <!-- Details -->
         <div class="space-y-8">
             <div>
                 <h2 class="text-2xl font-semibold mb-4" style="color: #334155;">Overview</h2>
                 <p class="text-gray-700 leading-relaxed">
-                    The sales team was struggling with outdated weekly reports that didn't provide the real-time insights they needed. They needed a solution that would give them immediate access to sales metrics, allow for custom views, and enable deeper analysis without waiting for scheduled reports.
+                    Tracking fishing locations and catch data was scattered across multiple spreadsheets and notes. There was no easy way to visualize where successful fishing spots were located or to see patterns in catch data over time. A solution was needed that would make it simple to log locations and instantly see them on a map.
                 </p>
             </div>
 
             <div>
                 <h2 class="text-2xl font-semibold mb-4" style="color: #334155;">Solution</h2>
                 <p class="text-gray-700 leading-relaxed mb-4">
-                    I developed an interactive dashboard using Tableau that connected directly to their sales data sources. The dashboard featured:
+                    I developed an interactive map using Leaflet.js that connects directly to a Google Sheets data source. The solution includes:
                 </p>
                 <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                    <li>Real-time data updates throughout the day</li>
-                    <li>Customizable views for different sales roles and territories</li>
-                    <li>Drill-down capabilities to explore data at multiple levels</li>
-                    <li>Interactive filters for time periods, products, and regions</li>
-                    <li>Export functionality for further analysis</li>
+                    <li>Real-time data synchronization from Google Sheets</li>
+                    <li>Color-coded markers showing catch success (green for fish caught, gray for no fish)</li>
+                    <li>Interactive popups with location details, flies used, and notes</li>
+                    <li>Automatic map bounds adjustment to show all locations</li>
+                    <li>Responsive design that works on desktop and mobile devices</li>
                 </ul>
             </div>
 
             <div>
                 <h2 class="text-2xl font-semibold mb-4" style="color: #334155;">Results</h2>
                 <p class="text-gray-700 leading-relaxed">
-                    The dashboard became the primary tool for the sales team's daily operations. Time spent on data-related questions decreased by 60%, and decision-making speed improved significantly. The team could now answer questions immediately and spot trends as they developed.
+                    The map makes it easy to visualize fishing locations and identify patterns in successful spots. Adding new locations is as simple as updating the Google Sheet, and the map automatically reflects the changes. This has made trip planning much more efficient and helped identify the most productive areas.
                 </p>
             </div>
 
             <div class="bg-gray-50 border-2 rounded p-6" style="border-color: #64748b;">
                 <h3 class="font-medium text-lg mb-3" style="color: #334155;">Technologies Used</h3>
                 <div class="flex flex-wrap gap-2 text-sm text-gray-600">
-                    <span>Tableau</span>
+                    <span>Leaflet.js</span>
                     <span>•</span>
-                    <span>SQL</span>
+                    <span>Google Sheets API</span>
                     <span>•</span>
-                    <span>Data Modeling</span>
+                    <span>JavaScript</span>
+                    <span>•</span>
+                    <span>CSS</span>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Papa Parse for CSV parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="fishing-map-script.js"></script>
 </body>
 </html>
+
