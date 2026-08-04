@@ -106,30 +106,174 @@
         .project-box:hover * {
             text-decoration: none;
         }
+        
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: #fff;
+        }
+        
+        .hero-media {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background-image: url('assets/hero-river-poster.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .hero-media video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+        
+        .hero-media video.is-active {
+            opacity: 1;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(15, 23, 42, 0.45) 0%,
+                rgba(15, 23, 42, 0.35) 45%,
+                rgba(15, 23, 42, 0.55) 100%
+            );
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 64rem;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem 1.5rem 4rem;
+        }
+        
+        .hero-nav {
+            position: relative;
+            z-index: 2;
+            max-width: 64rem;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1.5rem 1.5rem 0;
+        }
+        
+        .hero-nav a {
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 0.06em;
+            font-size: 0.875rem;
+        }
+        
+        .hero-nav a:hover {
+            color: #fff;
+            text-decoration: none;
+            opacity: 0.85;
+        }
+        
+        .hero-name {
+            font-size: clamp(2.75rem, 8vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+        }
+        
+        .hero-tagline {
+            font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+            line-height: 1.6;
+            max-width: 36rem;
+            color: rgba(255, 255, 255, 0.92);
+            margin-bottom: 1.75rem;
+        }
+        
+        .hero-cta {
+            display: inline-block;
+            padding: 0.7rem 1.35rem;
+            border: 1.5px solid rgba(255, 255, 255, 0.85);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        
+        .hero-cta:hover {
+            background: rgba(255, 255, 255, 0.12);
+            text-decoration: none;
+            color: #fff;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .hero-media video {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-white text-gray-900">
-    <div class="max-w-5xl mx-auto px-6 py-12 md:py-16">
-        <!-- Navigation -->
-        <nav class="mb-12 text-sm text-gray-600">
+    <!-- Hero with looping river video -->
+    <header class="hero">
+        <div class="hero-media" aria-hidden="true">
+            <video
+                id="hero-video-a"
+                class="is-active"
+                muted
+                playsinline
+                preload="auto"
+                poster="assets/hero-river-poster.jpg"
+            >
+                <source src="assets/hero-river-loop.mp4" type="video/mp4">
+            </video>
+            <video
+                id="hero-video-b"
+                muted
+                playsinline
+                preload="auto"
+            >
+                <source src="assets/hero-river-loop.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="hero-overlay" aria-hidden="true"></div>
+        
+        <nav class="hero-nav">
             <div class="flex flex-wrap gap-4">
-                <a href="#projects" class="hover:dark-blue dark-blue">PROJECTS</a>
-                <a href="#skills" class="hover:dark-blue dark-blue">SKILLS</a>
-                <a href="#contact" class="hover:dark-blue dark-blue">CONTACT</a>
+                <a href="#projects">PROJECTS</a>
+                <a href="#skills">SKILLS</a>
+                <a href="#contact">CONTACT</a>
             </div>
         </nav>
-
-        <!-- Header -->
-        <div class="mb-12 text-center">
-            <h1 class="text-5xl md:text-6xl font-bold mb-4 dark-blue">
-                👋 Hi, I'm John.
-            </h1>
-            <p class="text-lg md:text-xl text-gray-700 leading-relaxed mb-6 max-w-2xl mx-auto">
+        
+        <div class="hero-content">
+            <h1 class="hero-name">John Stephenson</h1>
+            <p class="hero-tagline">
                 I like to make complex things simple. My approach is centered on delivering smart, efficient solutions that address problems quickly and practically.
             </p>
-            <hr class="border-gray-300 max-w-2xl mx-auto">
+            <a href="#projects" class="hero-cta">View projects</a>
         </div>
+    </header>
 
+    <div class="max-w-5xl mx-auto px-6 py-12 md:py-16">
         <!-- Recent Work Section -->
         <div class="mb-16 grid grid-cols-1 md:grid-cols-2 gap-6" id="projects">
             <a href="university-admissions-marketing-analytics.html" class="bg-white border-2 blue-grey-border rounded-lg p-6 project-box block">
@@ -248,5 +392,66 @@
         </footer>
     </div>
 
+    <script>
+        (function () {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            const a = document.getElementById('hero-video-a');
+            const b = document.getElementById('hero-video-b');
+            if (!a || !b) return;
+
+            const FADE_SECONDS = 1.2;
+            let active = a;
+            let inactive = b;
+            let switching = false;
+
+            function playActive() {
+                const playPromise = active.play();
+                if (playPromise && typeof playPromise.catch === 'function') {
+                    playPromise.catch(function () {});
+                }
+            }
+
+            function switchVideos() {
+                if (switching) return;
+                switching = true;
+
+                inactive.currentTime = 0;
+                const playPromise = inactive.play();
+                if (playPromise && typeof playPromise.catch === 'function') {
+                    playPromise.catch(function () {});
+                }
+
+                inactive.classList.add('is-active');
+                active.classList.remove('is-active');
+
+                const previous = active;
+                active = inactive;
+                inactive = previous;
+
+                window.setTimeout(function () {
+                    previous.pause();
+                    previous.currentTime = 0;
+                    switching = false;
+                }, FADE_SECONDS * 1000);
+            }
+
+            function onTimeUpdate() {
+                if (switching || !active.duration || !isFinite(active.duration)) return;
+                if (active.currentTime >= active.duration - FADE_SECONDS) {
+                    switchVideos();
+                }
+            }
+
+            a.addEventListener('timeupdate', function () {
+                if (active === a) onTimeUpdate();
+            });
+            b.addEventListener('timeupdate', function () {
+                if (active === b) onTimeUpdate();
+            });
+
+            playActive();
+        })();
+    </script>
 </body>
 </html>
